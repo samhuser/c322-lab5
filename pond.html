@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ducks Pond</title>
+    <style>
+        .card{
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            transition: 0.3;
+            width: 20%;
+            border-radius: 5px;
+        }
+        .card:hover{
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        }
+        img{
+            border-radius: 5px 5px 0 0;
+        }
+    
+        .container{
+            padding: 2px 16px;
+        }
+    </style>
+</head>
+<body onload="display();" id="cards">
+
+
+    <script>
+        let ducks = [];
+        async function getAll(){
+         let host = "http://localhost:8080";
+         let request = {
+           method: "GET",
+           headers: {
+             "Content-Type": "application/json"
+           },
+         };
+         let response = await fetch(host + "/ducks", request);
+         if(response.status == 200){
+           message = "The ducks were successfully collected!";
+          }else{
+           console.log(response);
+           message = "Something went wrong! Duck data could not be recieved.";
+          }
+          alert(message);
+          console.log(response);
+          return response.json();
+       }
+
+       async function display() {    
+        console.log("loaded");
+         if(ducks.length == 0){
+           ducks = await getAll();
+           console.log(ducks);
+         }
+         let cards = document.getElementById("cards");
+         
+         for (let duck of ducks) {
+             let card = document.createElement("div");
+             card.className = "card";
+
+             let img = document.createElement("img");
+             img.src = "http://localhost:8080/ducks/"+duck.id+"/image";
+             img.alt = "Avatar";
+             img.style = "width: 100%";
+             let container = document.createElement("div");
+             container.className = "container";
+
+             let header = document.createElement("h4");
+
+             let text = document.createElement("b");
+
+             let id = document.createTextNode(duck.id);
+             let pg  = document.createElement("p");
+             let type  = document.createTextNode(duck.type);
+
+             text.appendChild(id);
+             header.append(text);
+
+             pg.appendChild(type);
+
+             container.appendChild(header);
+             container.appendChild(pg);
+             card.appendChild(img);
+             card.appendChild(container);
+             cards.appendChild(card);
+
+         }
+       }
+ 
+     </script>
+</body>
+</html>

@@ -39,20 +39,38 @@
               </tr>
         </thead>
         <tbody id="result">
-
+          
         </tbody>
      
     </table>
 
     <script>
-       let ducks = [
-        { id: 1, type: "Mallard" },
-        { id: 2, type: "Redhead" },
-        { id: 3, type: "Decoy" },
-      ];
+       let ducks = [];
+       async function getAll(){
+        let host = "http://localhost:8080";
+        let request = {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          },
+        };
+        let response = await fetch(host + "/ducks", request);
+        if(response.status == 200){
+          message = "The ducks were successfully collected!";
+         }else{
+          console.log(response);
+          message = "Something went wrong! Duck data could not be recieved.";
+         }
+         alert(message);
+         console.log(response);
+         return response.json();
+      }
 
       async function search() {    
-
+        if(ducks.length == 0){
+          ducks = await getAll();
+          console.log(ducks);
+        }
         let duckType = document.getElementById("type").value;
         let table = document.getElementById("result");
         table.innerHTML = "";
@@ -72,6 +90,7 @@
           }
         }
       }
+
     </script>
   </body>
 </html>
